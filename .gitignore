@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual Environment
+.venv/
+venv/
+
+# Environment Variables
+.env
+
+# Secrets
+# Secrets
+secrets/
+secrets/gcp-sa.json
+
+# VS Code
+.vscode/
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# SQLite
+*.db
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
