@@ -1,15 +1,27 @@
-BAD_DOMAINS = {
-    "youtube.com",
+BAD_DOMAINS = [
+
     "facebook.com",
+    "instagram.com",
     "twitter.com",
     "x.com",
-    "instagram.com",
-    "reddit.com",
-    "bloomberg.com",
-    "investing.com",
+    "youtube.com",
+    "tiktok.com",
+
     "wikipedia.org",
-    "linkedin.com/posts",
+
+    "indeed.com",
+    "glassdoor.com",
+
+    "reddit.com",
+
+    "amazon.com",
+
+    "ebay.com",
+
+    "linkedin.com/jobs",
+
     "linkedin.com/feed",
-    "play.google.com",
-    "apps.apple.com",
-}
+
+    "linkedin.com/posts",
+
+]

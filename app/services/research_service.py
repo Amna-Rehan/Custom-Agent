@@ -3,10 +3,12 @@ import requests
 
 from bs4 import BeautifulSoup
 from app.services.ai_service import AIService
+from app.services.database_service import DatabaseService
 
+database = DatabaseService()
 ai = AIService()
 EMAIL_REGEX = r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
-PHONE_REGEX = r"\+?\d[\d\s().-]{8,}"
+PHONE_REGEX = r"\+?[1-9]\d{7,14}"
 
 
 class ResearchService:
@@ -82,7 +84,8 @@ class ResearchService:
         }
 
         analysis = ai.analyze(website)
-
+    
+        database.save(analysis)
         return {
 
            "raw": website,

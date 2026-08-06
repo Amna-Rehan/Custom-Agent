@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-
+from app.api.discover import router as discover_router
 from app.database.init_db import init_database
 
 app = FastAPI(
@@ -8,9 +8,12 @@ app = FastAPI(
 )
 
 from app.api.search import router as search_router
-
+from app.api.enrich import router as enrich_router
+from app.api.organizations import router as organization_router
+app.include_router(organization_router)
+app.include_router(enrich_router)
 app.include_router(search_router)
-
+app.include_router(discover_router)
 
 @app.on_event("startup")
 def startup():

@@ -49,6 +49,10 @@ class Organization(BaseModel):
         nullable=True,
     )
 
+    phone: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+    )
     linkedin: Mapped[str | None] = mapped_column(
         String(500),
         nullable=True,

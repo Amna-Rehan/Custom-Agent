@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from ddgs import DDGS
 
-from app.schemas.search import SearchResult
+from app.schemas.discover import SearchResult
 from app.services.filters import BAD_DOMAINS
 
 
@@ -20,11 +20,43 @@ class DiscoveryService:
 
         return True
 
+    def is_relevant(self, title: str, description: str):
+
+        text = f"{title} {description}".lower()
+
+        blocked = [
+            "checking your browser",
+            "attention required",
+            "just a moment",
+            "cloudflare",
+            "captcha",
+            "cookie",
+            "sign in",
+            "log in",
+            "privacy policy",
+            "terms of use",
+            "404",
+            "page not found",
+            "news",
+            "blog",
+            "article",
+            "broker",
+            "stock",
+            "crypto",
+            "forex",
+        ]
+
+        for word in blocked:
+            if word in text:
+                return False
+
+        return True
+
     def get_title(self, url):
 
         try:
 
-            html = requests.get(
+            response = requests.get(
                 url,
                 timeout=5,
                 headers={
@@ -32,16 +64,19 @@ class DiscoveryService:
                 },
             )
 
-            soup = BeautifulSoup(html.text, "html.parser")
+            soup = BeautifulSoup(
+                response.text,
+                "html.parser",
+            )
 
             title = soup.title.text.strip() if soup.title else ""
+
+            description = ""
 
             meta = soup.find(
                 "meta",
                 attrs={"name": "description"},
             )
-
-            description = ""
 
             if meta:
                 description = meta.get("content", "")
@@ -52,7 +87,7 @@ class DiscoveryService:
 
             return "", ""
 
-    def search(self, query, category, country):
+    def search(self, query, category, country=None):
 
         if country:
             query = f"{query} {country}"
@@ -65,14 +100,14 @@ class DiscoveryService:
 
         with DDGS() as ddgs:
 
-            for item in ddgs.text(search_query, max_results=30):
+            for item in ddgs.text(search_query, max_results=50):
 
                 url = item["href"]
 
                 if not self.is_valid(url):
                     continue
 
-                domain = urlparse(url).netloc
+                domain = urlparse(url).netloc.lower()
 
                 if domain in seen:
                     continue
@@ -86,6 +121,9 @@ class DiscoveryService:
 
                 if not description:
                     description = item.get("body", "")
+
+                if not self.is_relevant(title, description):
+                    continue
 
                 results.append(
 
