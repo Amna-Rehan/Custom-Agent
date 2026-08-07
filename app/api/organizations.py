@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, func
 
 from app.database.session import SessionLocal
 from app.models.organization import Organization
@@ -33,35 +33,49 @@ def get_organizations(
 
         query = db.query(Organization)
 
+       
         if country:
             query = query.filter(
-                Organization.country.ilike(f"%{country}%")
+                Organization.country.ilike(
+                    f"%{country.strip()}%"
+                )
             )
 
         if city:
             query = query.filter(
-                Organization.city.ilike(f"%{city}%")
+                Organization.city.ilike(
+                    f"%{city.strip()}%"
+                )
             )
 
+       
         if organization_type:
             query = query.filter(
-                Organization.organization_type == organization_type.lower()
+                func.lower(
+                    Organization.organization_type
+                )
+                == organization_type.lower().strip()
             )
 
         if industry:
             query = query.filter(
-                Organization.industry.ilike(f"%{industry}%")
-            )
-
-        if verification_status:
-            query = query.filter(
-                Organization.verification_status.ilike(
-                    f"%{verification_status}%"
+                Organization.industry.ilike(
+                    f"%{industry.strip()}%"
                 )
             )
 
+       
+        if verification_status:
+            query = query.filter(
+                func.lower(
+                    Organization.verification_status
+                )
+                == verification_status.lower().strip()
+            )
+
         if search:
-            search_term = f"%{search}%"
+
+            search_term = f"%{search.strip()}%"
 
             query = query.filter(
                 Organization.name.ilike(search_term)
@@ -72,24 +86,41 @@ def get_organizations(
                 | Organization.country.ilike(search_term)
             )
 
-        
         allowed_sort_fields = {
-            "name": Organization.name,
-            "country": Organization.country,
-            "city": Organization.city,
-            "organization_type": Organization.organization_type,
-            "verification_score": Organization.verification_score,
+
+            "name":
+                Organization.name,
+
+            "country":
+                Organization.country,
+
+            "city":
+                Organization.city,
+
+            "organization_type":
+                Organization.organization_type,
+
+            "verification_score":
+                Organization.verification_score,
+
         }
 
         sort_column = allowed_sort_fields.get(
-            sort_by,
+            sort_by.lower(),
             Organization.name
         )
 
         if sort_order.lower() == "desc":
-            query = query.order_by(desc(sort_column))
+
+            query = query.order_by(
+                desc(sort_column)
+            )
+
         else:
-            query = query.order_by(asc(sort_column))
+
+            query = query.order_by(
+                asc(sort_column)
+            )
 
         total = query.count()
 
@@ -134,22 +165,32 @@ def get_organizations(
 
                 "linkedin": org.linkedin,
 
-                "verification_score": org.verification_score,
+                "verification_score":
+                    org.verification_score,
 
-                "verification_status": org.verification_status,
+                "verification_status":
+                    org.verification_status,
 
-                "verification_source": org.verification_source,
+                "verification_source":
+                    org.verification_source,
 
             })
 
         return {
+
             "total": total,
+
             "page": page,
+
             "page_size": page_size,
+
             "total_pages": (
-                (total + page_size - 1) // page_size
+                (total + page_size - 1)
+                // page_size
             ),
+
             "results": results,
+
         }
 
     finally:
