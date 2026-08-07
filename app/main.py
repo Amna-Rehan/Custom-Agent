@@ -10,6 +10,9 @@ app = FastAPI(
 from app.api.search import router as search_router
 from app.api.enrich import router as enrich_router
 from app.api.organizations import router as organization_router
+from app.api.dashboard import router as dashboard_router
+
+app.include_router(dashboard_router)
 app.include_router(organization_router)
 app.include_router(enrich_router)
 app.include_router(search_router)

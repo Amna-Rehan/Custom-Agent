@@ -2,11 +2,14 @@ import re
 import requests
 
 from bs4 import BeautifulSoup
+
 from app.services.ai_service import AIService
 from app.services.database_service import DatabaseService
 
+
 database = DatabaseService()
 ai = AIService()
+
 EMAIL_REGEX = r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
 PHONE_REGEX = r"\+?[1-9]\d{7,14}"
 
@@ -25,13 +28,19 @@ class ResearchService:
             timeout=10,
         )
 
+        response.raise_for_status()
+
         soup = BeautifulSoup(
             response.text,
             "html.parser"
         )
 
-        text = soup.get_text(" ", strip=True)
+        text = soup.get_text(
+            " ",
+            strip=True
+        )
 
+        
         title = ""
 
         if soup.title:
@@ -45,51 +54,106 @@ class ResearchService:
         )
 
         if meta:
-            description = meta.get("content", "")
+            description = meta.get(
+                "content",
+                ""
+            )
 
+       
         emails = re.findall(
             EMAIL_REGEX,
-            text,
+            text
         )
 
+        
         phones = re.findall(
             PHONE_REGEX,
-            text,
+            text
         )
 
+        
         linkedin = ""
 
-        for link in soup.find_all("a", href=True):
+        for link in soup.find_all(
+            "a",
+            href=True
+        ):
 
             href = link["href"]
 
             if "linkedin.com" in href:
+
                 linkedin = href
+
                 break
 
-        website = {
+        
+        website_data = {
 
-           "name": title,
- 
-           "website": url,
+            "name": title,
 
-           "email": emails[0] if emails else None,
+            "website": url,
 
-           "phone": phones[0] if phones else None,
+            "email": (
+                emails[0]
+                if emails
+                else None
+            ),
 
-           "linkedin": linkedin,
+            "phone": (
+                phones[0]
+                if phones
+                else None
+            ),
 
-           "description": description,
+            "linkedin": linkedin,
 
+            "description": description,
         }
 
-        analysis = ai.analyze(website)
-    
-        database.save(analysis)
+        
+        analysis = ai.analyze(
+            website_data
+        )
+
+        
+        if response.status_code == 200 and (
+            title or description or len(text) > 100
+        ):
+
+            analysis["verification_status"] = "verified"
+
+            analysis["verification_source"] = url
+
+        else:
+
+            analysis["verification_status"] = "unverified"
+
+            analysis["verification_source"] = ""
+
+       
+        saved_org = database.save(
+            analysis
+        )
+
         return {
 
-           "raw": website,
- 
-           "ai_analysis": analysis
+            "raw": website_data,
 
+            "ai_analysis": analysis,
+
+            "database": {
+
+                "saved": True,
+
+                "id": str(saved_org.id),
+
+                "verification_status": (
+                    saved_org.verification_status
+                ),
+
+                "verification_source": (
+                    saved_org.verification_source
+                ),
+            },
         }

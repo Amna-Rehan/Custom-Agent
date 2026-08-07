@@ -25,3 +25,9 @@ python-dotenv
 pgvector
 
 loguru
+requests
+
+ddgs
+google-cloud-aiplatform
+google-auth
+openpyxl
