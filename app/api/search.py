@@ -1,26 +1,28 @@
 from fastapi import APIRouter
 
 from app.schemas.search import (
-    ResearchRequest,
-    ResearchResponse,
+    SearchRequest,
+    SearchResponse,
 )
 
-from app.services.research_service import ResearchService
+from app.services.search_service import SearchService
+
 
 router = APIRouter(
-    prefix="/research",
-    tags=["Research"],
+    prefix="/search",
+    tags=["Search"],
 )
 
-service = ResearchService()
+
+service = SearchService()
 
 
 @router.post(
     "/",
-    response_model=ResearchResponse,
+    response_model=SearchResponse,
 )
-def research(data: ResearchRequest):
+def search(data: SearchRequest):
 
-    return service.crawl(
-        data.url
+    return service.search(
+        data.query
     )
