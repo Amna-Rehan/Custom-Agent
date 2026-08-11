@@ -31,3 +31,5 @@ ddgs
 google-cloud-aiplatform
 google-auth
 openpyxl
+
+pytest

@@ -1,5 +1,5 @@
 from sqlalchemy import Enum, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
 from app.models.enums import OrganizationType
@@ -70,4 +70,16 @@ class Organization(BaseModel):
     verification_source: Mapped[str | None] = mapped_column(
         String(500),
         nullable=True,
+    )
+
+    opportunities = relationship(
+        "Opportunity",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+
+    sources = relationship(
+        "Source",
+        back_populates="organization",
+        cascade="all, delete-orphan",
     )

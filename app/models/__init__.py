@@ -3,6 +3,7 @@ from .organization import Organization
 from .source import Source
 from .research_job import ResearchJob
 from .investors import Investor
+from .opportunity import Opportunity
 
 __all__ = [
     "User",
@@ -10,4 +11,5 @@ __all__ = [
     "Source",
     "ResearchJob",
     "Investor",
+    "Opportunity",
 ]
