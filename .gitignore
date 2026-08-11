@@ -36,3 +36,9 @@ htmlcov/
 
 # Windows
 Thumbs.db
+
+# Cursor
+.cursor/
+
+# Graphify generated output
+graphify-out/
