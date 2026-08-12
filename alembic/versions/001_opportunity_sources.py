@@ -1,10 +1,3 @@
-"""Add opportunities and extend sources for fact-level verification.
-
-Revision ID: 001_opportunity_sources
-Revises:
-Create Date: 2026-08-11
-"""
-
 from typing import Sequence, Union
 
 from alembic import op
@@ -17,7 +10,6 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Idempotent: create_all may already have created opportunities.
     op.execute(
         text(
             """

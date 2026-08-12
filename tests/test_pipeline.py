@@ -1,5 +1,3 @@
-"""Tests for verification, ranking, CSV export, and search failure handling."""
-
 from unittest.mock import MagicMock, patch
 
 from app.services.discovery_service import DiscoveryService

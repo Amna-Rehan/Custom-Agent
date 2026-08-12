@@ -7,24 +7,12 @@ alembic
 
 pydantic
 pydantic-settings
-
-redis
-celery
+python-dotenv
 
 beautifulsoup4
 playwright
 httpx
 lxml
-
-langgraph
-
-openai
-
-python-dotenv
-
-pgvector
-
-loguru
 requests
 
 ddgs

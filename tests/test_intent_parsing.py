@@ -1,5 +1,3 @@
-"""Unit tests for natural-language search intent parsing."""
-
 from app.services.ai_service import AIService, extract_json_payload
 
 

@@ -1,5 +1,3 @@
-"""Tests for research extraction shaping and deduplication."""
-
 from unittest.mock import MagicMock, patch
 
 from app.services.database_service import DatabaseService
