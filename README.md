@@ -56,9 +56,9 @@ Frontend Dashboard
 
 ---
 
-# ✨ Key Features
+#  Key Features
 
-## 🔎 1. Natural-Language Search
+##  1. Natural-Language Search
 
 Users can search using normal language instead of manually specifying multiple API parameters.
 
@@ -101,7 +101,7 @@ Country: Germany
 
 ---
 
-# 🌍 2. Global Web Discovery
+#  2. Global Web Discovery
 
 The system dynamically discovers organizations across the web instead of relying only on a predefined database.
 
