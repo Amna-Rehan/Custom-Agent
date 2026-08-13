@@ -3,7 +3,7 @@ from app.services.ai_service import AIService, extract_json_payload
 
 def test_parse_startups_in_pakistan():
     ai = AIService()
-    ai._generate_json = lambda prompt: None  # force deterministic path
+    ai._generate_json = lambda prompt: None  
 
     intent = ai.parse_search_intent("Find startups in Pakistan")
 
