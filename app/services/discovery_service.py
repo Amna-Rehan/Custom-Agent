@@ -6,7 +6,14 @@ from ddgs import DDGS
 
 from app.config import settings
 from app.schemas.discover import SearchResult
-from app.services.filters import BAD_DOMAINS, BAD_PATH_FRAGMENTS
+from app.services.filters import (
+    BAD_DOMAINS,
+    BAD_PATH_FRAGMENTS,
+    BLOCKED_TEXT_PATTERNS,
+    is_blocked_domain,
+    is_blocked_path,
+    is_blocked_text,
+)
 
 
 class DiscoveryService:
@@ -16,18 +23,11 @@ class DiscoveryService:
         domain = parsed.netloc.lower()
         path = parsed.path.lower()
 
-        if domain.startswith("www."):
-            domain_cmp = domain[4:]
-        else:
-            domain_cmp = domain
+        if is_blocked_domain(domain):
+            return False
 
-        for bad in BAD_DOMAINS:
-            if bad in domain_cmp or bad in domain:
-                return False
-
-        for fragment in BAD_PATH_FRAGMENTS:
-            if fragment in path:
-                return False
+        if is_blocked_path(path):
+            return False
 
         # Skip obvious article deep-links
         if path.count("/") >= 3 and any(
@@ -48,41 +48,13 @@ class DiscoveryService:
         text = f"{title} {description}".lower()
         intent = intent or {}
 
-        blocked = [
-            "checking your browser",
-            "attention required",
-            "just a moment",
-            "cloudflare",
-            "captcha",
-            "cookie policy",
-            "privacy policy",
-            "terms of use",
-            "404",
-            "page not found",
-            "403 forbidden",
-            "error 403",
-            "broker",
-            "stock",
-            "crypto",
-            "forex",
-            "posted on linkedin",
-            "top 10",
-            "top 20",
-            "best startups",
-            "list of startups",
-            "startup directory",
-            "complete list",
-            "misunderstood",
-        ]
-
-        for word in blocked:
-            if word in text:
-                return False
+        if is_blocked_text(text, BLOCKED_TEXT_PATTERNS):
+            return False
 
         # Reject newsy titles when looking for organizations
-        newsy_title = any(
-            token in (title or "").lower()
-            for token in (
+        newsy_title = is_blocked_text(
+            title or "",
+            [
                 "news",
                 "eyes",
                 "posted",
@@ -91,7 +63,7 @@ class DiscoveryService:
                 "complete list",
                 "unlock your",
                 "success stories",
-            )
+            ],
         )
         if newsy_title:
             return False

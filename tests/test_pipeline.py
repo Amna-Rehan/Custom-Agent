@@ -1,8 +1,18 @@
 from unittest.mock import MagicMock, patch
 
 from app.services.discovery_service import DiscoveryService
+from app.services.filters import is_blocked_domain, is_blocked_path, is_blocked_text
 from app.services.verification_service import VerificationService
 from app.schemas.discover import SearchResult
+
+
+def test_filter_helpers_reject_bad_domains_paths_and_noise():
+    assert is_blocked_domain("https://linkedin.com/in/example") is True
+    assert is_blocked_domain("https://example.org/about") is False
+    assert is_blocked_path("https://example.org/blog/post") is True
+    assert is_blocked_path("https://example.org/about") is False
+    assert is_blocked_text("This is a top 10 startup list") is True
+    assert is_blocked_text("Official accelerator program") is False
 
 
 def test_verification_does_not_use_confidence_alone():
